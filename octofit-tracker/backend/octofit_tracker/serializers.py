@@ -2,11 +2,17 @@ from rest_framework import serializers
 from .models import User, Team, Activity, Workout, Leaderboard
 
 
+
 class TeamSerializer(serializers.ModelSerializer):
-    id = serializers.CharField(read_only=True)
+    id = serializers.CharField(read_only=True, required=False)
     class Meta:
         model = Team
         fields = '__all__'
+
+    def create(self, validated_data):
+        # Remove id if present, let Djongo generate it
+        validated_data.pop('id', None)
+        return Team.objects.create(**validated_data)
 
 
 class UserSerializer(serializers.ModelSerializer):
